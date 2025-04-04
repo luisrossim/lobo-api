@@ -4,7 +4,7 @@ import logger from './logger.js';
 const config = {
   host: 'localhost',
   port: 3050,
-  database: 'C:/Users/luisn/downloads/Lobo.fdb',
+  database: 'C:/Users/luis/documents/utils/Lobo.fdb',
   user: 'SYSDBA',
   password: 'masterkey',
   lowercase_keys: false,
@@ -41,7 +41,7 @@ export function queryAsync<T>(db: any, sql: string, params: any[]): Promise<T> {
   });
 }
 
-export async function executeQuery<T>(sql: string, params: any[]): Promise<T> {
+export async function executeQuery<T>(sql: string, params: any[] = []): Promise<T> {
   let db: any;
   try {
     db = await getConnection();

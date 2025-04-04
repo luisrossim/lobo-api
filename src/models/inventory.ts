@@ -1,7 +1,8 @@
-import { Produto } from "./product.js"
+import { Item } from "./item.js"
 
 export interface InventoryHistory {
-    produto: Produto
+    id: number
+    item: Item
     quantidade: number
-    criadoEm: string
+    criado_em: string
 }
