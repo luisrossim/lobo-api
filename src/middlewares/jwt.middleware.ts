@@ -15,7 +15,7 @@ export function JWTAuth(req: Request, res: Response, next: NextFunction) {
   const decoded = verifyAccessToken(token);
   if (!decoded) {
     logger.warn("Acesso negado (token inválido).")
-    res.status(403).json({ message: "Acesso negado." });
+    res.status(401).json({ message: "Acesso negado." });
     return;
   }
 

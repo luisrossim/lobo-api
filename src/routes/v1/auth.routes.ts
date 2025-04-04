@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { AuthController } from '../controllers/auth.controller.js';
-import { JWTAuth } from '../middlewares/jwt.middleware.js';
-import { requestLimiter } from '../middlewares/rate-limit.middleware.js';
+import { AuthController } from '../../controllers/auth.controller.js';
+import { JWTAuth } from '../../middlewares/jwt.middleware.js';
+import { requestLimiter } from '../../middlewares/rate-limit.middleware.js';
 
 const router = Router();
 const authController = new AuthController();
