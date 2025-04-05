@@ -8,17 +8,18 @@ describe("UtilsService (Testes Unitários)", () => {
     });
 
     it("deve lançar erro para número negativo", () => {
-      expect(() => Utils.parseParamToValidNumber("-5")).toThrow('Parâmetros da consulta inválidos.');
+      expect(() => Utils.parseParamToValidNumber("-5")).toThrow('Parâmetros numéricos inválidos.');
     });
 
     it("deve lançar erro para valor inválido", () => {
-      expect(() => Utils.parseParamToValidNumber("abc")).toThrow('Parâmetros da consulta inválidos.');
+      expect(() => Utils.parseParamToValidNumber("abc")).toThrow('Parâmetros numéricos inválidos.');
     });
 
     it("deve lançar erro para zero", () => {
-      expect(() => Utils.parseParamToValidNumber("0")).toThrow('Parâmetros da consulta inválidos.');
+      expect(() => Utils.parseParamToValidNumber("0")).toThrow('Parâmetros numéricos inválidos.');
     });
   });
+
 
   describe("parseIntervalToValidDate", () => {
     it("deve retornar datas válidas", () => {
@@ -32,14 +33,32 @@ describe("UtilsService (Testes Unitários)", () => {
     });
 
     it("deve lançar erro para datas inválidas", () => {
-      expect(() => Utils.parseIntervalToValidDate("32/01/2024", "31/01/2024")).toThrow('Datas inválidas.');
+      expect(() => Utils.parseIntervalToValidDate("32/01/2024", "31/01/2024")).toThrow('Intervalo de data inválido.');
     });
 
     it("deve lançar erro para datas vazias", () => {
-      expect(() => Utils.parseIntervalToValidDate("", "31/01/2024")).toThrow('Intervalo inválido ou inexistente.');
-      expect(() => Utils.parseIntervalToValidDate("01/01/2024", "")).toThrow('Intervalo inválido ou inexistente.');
+      expect(() => Utils.parseIntervalToValidDate("", "31/01/2024")).toThrow('Intervalo de data inexistente.');
+      expect(() => Utils.parseIntervalToValidDate("01/01/2024", "")).toThrow('Intervalo de data inexistente.');
     });
   });
+
+
+  describe("parseStringToValidDate", () => {
+    it("deve retornar uma data válida", () => {
+      const result = Utils.parseStringToValidDate("01/01/2024");
+      expect(result).toBeInstanceOf(Date);
+    });
+
+    it("deve lançar erro para data inválida", () => {
+      expect(() => Utils.parseStringToValidDate("32/01/2024")).toThrow('Data inválida.');
+      expect(() => Utils.parseStringToValidDate(" ")).toThrow('Data inválida.');
+    });
+
+    it("deve lançar erro para data vazia", () => {
+      expect(() => Utils.parseStringToValidDate("")).toThrow('Data inexistente.');
+    });
+  });
+
 
   describe("parseStringToBoolean", () => {
     it("deve retornar true para valores verdadeiros", () => {
@@ -53,7 +72,7 @@ describe("UtilsService (Testes Unitários)", () => {
     });
 
     it("deve lançar erro para valor inválido", () => {
-      expect(() => Utils.parseStringToBoolean("invalido")).toThrow('Status inválido.');
+      expect(() => Utils.parseStringToBoolean("invalido")).toThrow('Parâmetro de status inválido.');
     });
 
     it("deve ser case insensitive", () => {
@@ -61,6 +80,7 @@ describe("UtilsService (Testes Unitários)", () => {
       expect(Utils.parseStringToBoolean("FALSE")).toBe(false);
     });
   });
+
 
   describe("formatarValor", () => {
     it("deve formatar número com duas casas decimais", () => {
@@ -79,5 +99,43 @@ describe("UtilsService (Testes Unitários)", () => {
       expect(Utils.formatarValor(0)).toBe("0,00");
     });
   });
+
+
+  describe("removeEmptyFields", () => {
+    it("deve retornar um objeto filtrando somente por campos válidos", () => {
+      const resultado = Utils.removeEmptyFields({
+        id: null,
+        name: "Luis",
+        city: ""
+      });
+
+      expect(resultado).toEqual({
+        name: "Luis"
+      });
+    });
+
+    it("deve retornar o mesmo objeto", () => {
+      const obj = {
+        id: 1,
+        name: "Luis",
+        city: "Tokyo"
+      }
+
+      const resultado = Utils.removeEmptyFields(obj);
+      expect(resultado).toEqual(obj);
+    });
+
+    it("deve retornar um objeto vazio", () => {
+      const obj = {
+        id: null,
+        name: undefined,
+        city: ""
+      }
+
+      const resultado = Utils.removeEmptyFields(obj);
+      expect(resultado).toEqual({});
+    });
+  });
+
 });
 

@@ -1,12 +1,14 @@
 import * as Firebird from 'node-firebird';
 import logger from './logger.js';
 
+const { DB_HOST, DB_URL, DB_USER, DB_PASSWORD } = process.env;
+
 const config = {
-  host: 'localhost',
+  host: DB_HOST,
   port: 3050,
-  database: 'C:/Users/luisn/downloads/Lobo.fdb',
-  user: 'SYSDBA',
-  password: 'masterkey',
+  database: DB_URL,
+  user: DB_USER,
+  password: DB_PASSWORD,
   lowercase_keys: false,
   pageSize: 8192
 };
@@ -31,7 +33,6 @@ export function queryAsync<T>(db: any, sql: string, params: any[]): Promise<T> {
   return new Promise((resolve, reject) => {
     db.query(sql, params, (err: Error | null, result: T) => {
       if (err) {
-        logger.error('Erro na consulta.', err);
         reject(err);
 
       } else {
@@ -41,15 +42,15 @@ export function queryAsync<T>(db: any, sql: string, params: any[]): Promise<T> {
   });
 }
 
-export async function executeQuery<T>(sql: string, params: any[]): Promise<T> {
+export async function executeQuery<T>(sql: string, params: any[] = []): Promise<T> {
   let db: any;
+
   try {
     db = await getConnection();
     return await queryAsync<T>(db, sql, params);
 
   } catch (err: any) {
-    logger.error('Erro na execução da query.', err);
-    throw new Error(err?.message);
+    throw new Error(`Erro ao realizar query: ${err}`);
 
   } finally {
     db?.detach();

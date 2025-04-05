@@ -14,30 +14,23 @@ export class AuthController {
   async login(req: Request, res: Response) {
     const authRequest: AuthRequest = req.body;
 
-    try {
-      const authResponse: AuthResponse = await this.authService.autenticar(authRequest);
-      return res.status(200).json(authResponse);
-
-    } catch (err: any) {
-      return res.status(500).json({ message: err.message });
-    }
+    const authResponse: AuthResponse = await this.authService.autenticar(authRequest);
+    return res.status(200).json(authResponse);
   }
+
 
   async refreshAccess(req: Request, res: Response) {
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
-      return res.status(401).json({ message: 'Refresh token não fornecido.' });
+      return res.status(400).json({ message: 'Refresh token não fornecido.' });
     }
 
-    try {
-      const updatedAuthData = await this.authService.accessTokenRecover(refreshToken);
-      return res.status(200).json(updatedAuthData);
-
-    } catch (err: any) {
-      return res.status(500).json({ message: err.message });
-    }
+    const updatedAuthData = await this.authService.accessTokenRecover(refreshToken);
+    
+    return res.status(200).json(updatedAuthData);
   }
+
 
   async checkAccess(req: Request, res: Response) {
     return res.status(200).json({ message: 'Sessão válida.' });

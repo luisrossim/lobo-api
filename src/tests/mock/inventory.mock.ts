@@ -1,10 +1,12 @@
 import { InventoryHistory } from '@/models/inventory.js';
-import { Produto } from '@/models/product.js';
+import { Item } from '@/models/item.js';
 
-const produtosMock: Produto[] = Array.from({ length: 10 }, (_, i) => ({
+const produtosMock: Item[] = Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
     descricao: `Produto ${i + 1}`,
-    estoqueMinimo: (Math.floor(Math.random() * 50) + 10).toString()
+    estoque_minimo: (Math.floor(Math.random() * 50) + 10),
+    un_medida: "UN",
+    flag_controle: "S"
 }));
 
 const datas = [
@@ -14,11 +16,12 @@ const datas = [
     '2024-03-12T00:00:00Z'
 ];
 
-const inventoryHistoryMock: InventoryHistory[] = produtosMock.flatMap(produto =>
+const inventoryHistoryMock: InventoryHistory[] = produtosMock.flatMap((item, index) =>
     datas.map(data => ({
-        produto,
+        id: index,
+        item,
         quantidade: Math.floor(Math.random() * 100) + 1,
-        criadoEm: data
+        criado_em: data
     }))
 );
 
