@@ -2,7 +2,7 @@ import { InvalidArgumentsException } from "../exceptions/invalid-arguments.js";
 import { isValid, parse } from "date-fns";
 
 export class Utils {
-    static parseStringToValidDate(_data: string){
+    static parseStringToValidDate(_data: string): Date {
         if (!_data) {
             throw new InvalidArgumentsException('Data inexistente.');
         }
@@ -17,7 +17,7 @@ export class Utils {
     }
     
 
-    static parseIntervalToValidDate(dataInicial: string, dataFinal: string){
+    static parseIntervalToValidDate(dataInicial: string, dataFinal: string) {
         if (!dataInicial || !dataFinal) {
             throw new InvalidArgumentsException('Intervalo de data inexistente.');
         }
@@ -66,4 +66,10 @@ export class Utils {
     static formatarValor(valor: number): string {
         return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
+
+    static removeEmptyFields(obj: Record<string, any>): Record<string, any> {
+        return Object.fromEntries(
+            Object.entries(obj).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+        );
+    }
 }

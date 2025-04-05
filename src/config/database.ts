@@ -1,12 +1,14 @@
 import * as Firebird from 'node-firebird';
 import logger from './logger.js';
 
+const { DB_HOST, DB_URL, DB_USER, DB_PASSWORD } = process.env;
+
 const config = {
-  host: 'localhost',
+  host: DB_HOST,
   port: 3050,
-  database: 'C:/Users/luis/documents/utils/Lobo.fdb',
-  user: 'SYSDBA',
-  password: 'masterkey',
+  database: DB_URL,
+  user: DB_USER,
+  password: DB_PASSWORD,
   lowercase_keys: false,
   pageSize: 8192
 };
