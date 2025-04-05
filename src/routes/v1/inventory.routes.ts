@@ -9,5 +9,9 @@ router.get('/', async (req, res) => {
     await inventoryController.findAll(req, res)
 });
 
+router.post('/', async (req, res, next) => { 
+    await inventoryController.create(req, res).catch(next);
+});
+
 
 export default router;

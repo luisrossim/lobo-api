@@ -1,16 +1,32 @@
+import { InvalidArgumentsException } from "@/exceptions/invalid-arguments.js";
 import { isValid, parse } from "date-fns";
 
 export class Utils {
+    static parseStringToValidDate(_data: string){
+        if (!_data) {
+            throw new InvalidArgumentsException('Data inexistente.');
+        }
+
+        const dataParsed = parse(_data, 'dd/MM/yyyy', new Date());
+
+        if (!isValid(dataParsed)) {
+            throw new InvalidArgumentsException('Data inválida.');
+        }
+
+        return dataParsed;
+    }
+    
+
     static parseIntervalToValidDate(dataInicial: string, dataFinal: string){
         if (!dataInicial || !dataFinal) {
-            throw new Error('Intervalo inválido ou inexistente.');
+            throw new InvalidArgumentsException('Intervalo de data inexistente.');
         }
 
         const dataInicialParsed = parse(dataInicial, 'dd/MM/yyyy', new Date());
         const dataFinalParsed = parse(dataFinal, 'dd/MM/yyyy', new Date());
 
         if (!isValid(dataInicialParsed) || !isValid(dataFinalParsed)) {
-            throw new Error('Datas inválidas.');
+            throw new InvalidArgumentsException('Intervalo de data inválido.');
         }
 
         dataFinalParsed.setHours(23, 59, 59, 999);
@@ -23,7 +39,7 @@ export class Utils {
         const number = Number(value);
     
         if (isNaN(number) || number <= 0) {
-            throw new Error('Parâmetros da consulta inválidos.');
+            throw new InvalidArgumentsException('Parâmetros numéricos inválidos.');
         }
     
         return number;
@@ -43,8 +59,8 @@ export class Utils {
         if (falsyValues.includes(stringValue)) {
             return false;
         }
-    
-        throw new Error("Status inválido.");
+
+        throw new InvalidArgumentsException('Parâmetro de status inválido.');
     }
 
     static formatarValor(valor: number): string {
