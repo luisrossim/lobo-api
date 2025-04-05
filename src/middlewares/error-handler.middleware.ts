@@ -4,10 +4,13 @@ import { Request, Response, NextFunction } from 'express';
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
 	if (err instanceof HttpException) {
+		logger.error(err.message);
 		res.status(err.status).json({ message: err.message });
 		return;
 	}
 
-	logger.error(`Erro interno do servidor: ${err.message}`);
-	res.status(500).json({ message: 'Erro interno do servidor.' });
+	const internalErrorMessage = "Erro interno do servidor."
+	
+	logger.error(`${internalErrorMessage} ${err}`);
+	res.status(500).json({ message: internalErrorMessage });
 }

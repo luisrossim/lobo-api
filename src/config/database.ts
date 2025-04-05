@@ -31,7 +31,6 @@ export function queryAsync<T>(db: any, sql: string, params: any[]): Promise<T> {
   return new Promise((resolve, reject) => {
     db.query(sql, params, (err: Error | null, result: T) => {
       if (err) {
-        logger.error('Erro na consulta.', err);
         reject(err);
 
       } else {
@@ -43,13 +42,13 @@ export function queryAsync<T>(db: any, sql: string, params: any[]): Promise<T> {
 
 export async function executeQuery<T>(sql: string, params: any[] = []): Promise<T> {
   let db: any;
+
   try {
     db = await getConnection();
     return await queryAsync<T>(db, sql, params);
 
   } catch (err: any) {
-    logger.error('Erro na execução da query.', err);
-    throw new Error(err?.message);
+    throw new Error(`Erro ao realizar query: ${err}`);
 
   } finally {
     db?.detach();

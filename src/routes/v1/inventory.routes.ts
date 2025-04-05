@@ -5,8 +5,8 @@ const router = Router();
 const inventoryController = new InventoryController();
 
 
-router.get('/', async (req, res) => { 
-    await inventoryController.findAll(req, res)
+router.get('/', async (req, res, next) => { 
+    await inventoryController.findAll(req, res).catch(next)
 });
 
 router.post('/', async (req, res, next) => { 

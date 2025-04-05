@@ -8,15 +8,15 @@ describe("UtilsService (Testes Unitários)", () => {
     });
 
     it("deve lançar erro para número negativo", () => {
-      expect(() => Utils.parseParamToValidNumber("-5")).toThrow('Parâmetros da consulta inválidos.');
+      expect(() => Utils.parseParamToValidNumber("-5")).toThrow('Parâmetros numéricos inválidos.');
     });
 
     it("deve lançar erro para valor inválido", () => {
-      expect(() => Utils.parseParamToValidNumber("abc")).toThrow('Parâmetros da consulta inválidos.');
+      expect(() => Utils.parseParamToValidNumber("abc")).toThrow('Parâmetros numéricos inválidos.');
     });
 
     it("deve lançar erro para zero", () => {
-      expect(() => Utils.parseParamToValidNumber("0")).toThrow('Parâmetros da consulta inválidos.');
+      expect(() => Utils.parseParamToValidNumber("0")).toThrow('Parâmetros numéricos inválidos.');
     });
   });
 
@@ -32,12 +32,12 @@ describe("UtilsService (Testes Unitários)", () => {
     });
 
     it("deve lançar erro para datas inválidas", () => {
-      expect(() => Utils.parseIntervalToValidDate("32/01/2024", "31/01/2024")).toThrow('Datas inválidas.');
+      expect(() => Utils.parseIntervalToValidDate("32/01/2024", "31/01/2024")).toThrow('Intervalo de data inválido.');
     });
 
     it("deve lançar erro para datas vazias", () => {
-      expect(() => Utils.parseIntervalToValidDate("", "31/01/2024")).toThrow('Intervalo inválido ou inexistente.');
-      expect(() => Utils.parseIntervalToValidDate("01/01/2024", "")).toThrow('Intervalo inválido ou inexistente.');
+      expect(() => Utils.parseIntervalToValidDate("", "31/01/2024")).toThrow('Intervalo de data inexistente.');
+      expect(() => Utils.parseIntervalToValidDate("01/01/2024", "")).toThrow('Intervalo de data inexistente.');
     });
   });
 
@@ -53,7 +53,7 @@ describe("UtilsService (Testes Unitários)", () => {
     });
 
     it("deve lançar erro para valor inválido", () => {
-      expect(() => Utils.parseStringToBoolean("invalido")).toThrow('Status inválido.');
+      expect(() => Utils.parseStringToBoolean("invalido")).toThrow('Parâmetro de status inválido.');
     });
 
     it("deve ser case insensitive", () => {
