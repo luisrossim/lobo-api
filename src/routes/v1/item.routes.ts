@@ -5,12 +5,12 @@ const router = Router();
 const itemController = new ItemController();
 
 
-router.get('/:id', async (req, res) => {
-    await itemController.findById(req, res)
+router.get('/:id', async (req, res, next) => {
+    await itemController.findById(req, res).catch(next);
 });
 
-router.get('/', async (req, res) => { 
-    await itemController.findAll(req, res)
+router.get('/', async (req, res, next) => { 
+    await itemController.findAll(req, res).catch(next);
 });
 
 

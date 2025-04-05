@@ -1,4 +1,4 @@
-import { InvalidArgumentsException } from "@/exceptions/invalid-arguments.js";
+import { InvalidArgumentsException } from "../exceptions/invalid-arguments.js";
 import { isValid, parse } from "date-fns";
 
 export class Utils {

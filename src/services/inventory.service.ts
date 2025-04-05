@@ -2,7 +2,7 @@ import { executeQuery } from "@/config/database.js";
 import { InventoryHistory } from "../models/inventory.js";
 import { inventoryHistoryMock } from "@/tests/mock/inventory.mock.js"
 import { ItemService } from "./item.service.js";
-import { NotFoundException } from "@/exceptions/not-found.js";
+import { CustomError } from "@/exceptions/custom-error.js";
 
 
 export class InventoryService {
@@ -13,13 +13,8 @@ export class InventoryService {
 	}
 
 	async findAll(): Promise<InventoryHistory[]> {
-		try {
-			const mock = inventoryHistoryMock;
-			return mock;
-		
-		} catch (err: any) {
-			throw new Error(`Erro ao buscar estoque. ${err.message}`);
-		}
+		const mock = inventoryHistoryMock;
+		return mock;
 	}
 
 	async create(itemId: number, quantidade: number, criadoEm: Date): Promise<number> {
@@ -28,13 +23,13 @@ export class InventoryService {
 			VALUES (?, ?, ?)
 			RETURNING ID
 		`
-		const itemEntity = await this.itemService.findById(itemId);
+		const itemIsValid = await this.itemService.findById(itemId);
+		const historicoId = await executeQuery<number>(query, [itemId, quantidade, criadoEm]);
 
-		if (!itemEntity){
-			throw new NotFoundException('Item não encontrado.');
+		if(!historicoId) {
+			throw new CustomError('Erro ao salvar histórico no inventário.');
 		}
 
-		const historicoId = await executeQuery<number>(query, [itemId, quantidade, criadoEm]);
 		return historicoId;
 	}
 
