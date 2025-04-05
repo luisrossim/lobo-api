@@ -1,6 +1,5 @@
 import { executeQuery } from "@/config/database.js";
 import { InventoryHistory } from "../models/inventory.js";
-import { inventoryHistoryMock } from "@/tests/mock/inventory.mock.js"
 import { ItemService } from "./item.service.js";
 import { CustomError } from "@/exceptions/custom-error.js";
 
@@ -12,10 +11,24 @@ export class InventoryService {
 		this.itemService = new ItemService();
 	}
 
+ 
 	async findAll(): Promise<InventoryHistory[]> {
-		const mock = inventoryHistoryMock;
-		return mock;
+		const query = `
+			SELECT * 
+			FROM INVENTARIO_HISTORICO
+			WHERE CRIADO_EM >= CURRENT_DATE - 28
+			ORDER BY CRIADO_EM DESC, ID DESC
+		`
+
+		const historico = await executeQuery<InventoryHistory[]>(query);
+
+		if(!historico){
+			throw new CustomError('Erro ao buscar histórico do inventário.');
+		}
+
+		return historico;
 	}
+
 
 	async create(itemId: number, quantidade: number, criadoEm: Date): Promise<number> {
 		const query = `

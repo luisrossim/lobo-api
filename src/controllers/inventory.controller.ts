@@ -13,8 +13,13 @@ export class InventoryController {
 
 
   async findAll(req: Request, res: Response): Promise<Response> {
-    const inventory = await this.inventoryService.findAll();
-    return res.status(200).json(inventory);
+    const inventoryHistory = await this.inventoryService.findAll();
+
+    if(inventoryHistory.length === 0){
+      return res.status(204).send();
+    }
+
+    return res.status(200).json(inventoryHistory);
   }
 
 

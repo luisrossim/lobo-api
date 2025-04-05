@@ -1,5 +1,5 @@
-import { InventoryHistory } from '@/models/inventory.js';
-import { Item } from '@/models/item.js';
+import { InventoryHistory } from '../../models/inventory.js';
+import { Item } from '../../models/item.js';
 
 const produtosMock: Item[] = Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
