@@ -6,3 +6,8 @@ export interface InventoryHistory {
     quantidade: number
     criado_em: string
 }
+
+export interface InventoryContagem {
+    itemId: number
+    quantidade: number
+}

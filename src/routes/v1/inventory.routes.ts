@@ -10,7 +10,7 @@ router.get('/', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => { 
-    await inventoryController.create(req, res).catch(next);
+    await inventoryController.createAll(req, res).catch(next);
 });
 
 

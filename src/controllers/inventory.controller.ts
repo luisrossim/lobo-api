@@ -35,4 +35,13 @@ export class InventoryController {
     return res.status(201).json(historicoId);
   }
 
+
+  async createAll(req: Request, res: Response): Promise<Response> {
+    const contagem: { itemId: number, quantidade: number }[] = req.body;
+    
+    await this.inventoryService.createAll(contagem);
+    
+    return res.status(201).send();
+  }
+
 }

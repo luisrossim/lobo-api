@@ -1,7 +1,8 @@
-import { executeQuery } from "@/config/database.js";
-import { InventoryHistory } from "../models/inventory.js";
+import { executeQuery, salvarContagemEmLote } from "@/config/database.js";
+import { InventoryContagem, InventoryHistory } from "../models/inventory.js";
 import { ItemService } from "./item.service.js";
 import { CustomError } from "@/exceptions/custom-error.js";
+import { format } from "date-fns/format";
 
 
 export class InventoryService {
@@ -14,10 +15,22 @@ export class InventoryService {
  
 	async findAll(): Promise<InventoryHistory[]> {
 		const query = `
-			SELECT * 
-			FROM INVENTARIO_HISTORICO
-			WHERE CRIADO_EM >= CURRENT_DATE - 28
-			ORDER BY CRIADO_EM DESC, ID DESC
+			SELECT 
+				IH.ID, 
+				I.ID AS ITEM_ID, 
+				I.DESCRICAO, 
+				I.ESTOQUE_MINIMO, 
+				I.UN_MEDIDA, 
+				IH.QUANTIDADE, 
+				IH.CRIADO_EM 
+			FROM 
+				INVENTARIO_HISTORICO IH
+			JOIN ITEM I
+				ON IH.ITEM_ID = I.ID
+			WHERE
+				CRIADO_EM >= CURRENT_DATE - 28
+			ORDER BY 
+				CRIADO_EM DESC, ID DESC
 		`
 
 		const historico = await executeQuery<InventoryHistory[]>(query);
@@ -44,6 +57,14 @@ export class InventoryService {
 		}
 
 		return historicoId;
+	}
+
+
+	async createAll(contagem: InventoryContagem[]): Promise<void> {
+		const todayDate = new Date();
+		const todayString = format(todayDate, "yyyy-MM-dd");
+
+		return await salvarContagemEmLote(contagem, todayString);
 	}
 
 }
