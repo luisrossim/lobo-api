@@ -1,7 +1,7 @@
-import { executeQuery } from "@/config/database.js";
-import { CustomError } from "@/exceptions/custom-error.js";
-import { NotFoundException } from "@/exceptions/not-found.js";
-import { Item } from "@/models/item.js";
+import { executeQuery } from "../config/database.js";
+import { CustomError } from "../exceptions/custom-error.js";
+import { NotFoundException } from "../exceptions/not-found.js";
+import { Item } from "../models/item.js";
 
 export class ItemService {
 

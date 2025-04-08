@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { ItemService } from '@/services/item.service.js';
-import { Utils } from '@/utils/utils.service.js';
+import { ItemService } from '../services/item.service.js';
+import { Utils } from '../utils/utils.service.js';
 
 
 export class ItemController {

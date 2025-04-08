@@ -1,5 +1,5 @@
-import logger from '@/config/logger.js';
-import { HttpException } from '@/exceptions/http-exception.js';
+import logger from '../config/logger.js';
+import { HttpException } from '../exceptions/http-exception.js';
 import { Request, Response, NextFunction } from 'express';
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {

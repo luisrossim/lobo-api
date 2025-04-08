@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../services/security/jwt.service.js";
-import logger from "@/config/logger.js";
+import logger from "../config/logger.js";
 
 export function JWTAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;

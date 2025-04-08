@@ -1,5 +1,5 @@
 import rateLimit from 'express-rate-limit';
-import logger from '@/config/logger.js';
+import logger from '../config/logger.js';
 
 export const requestLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

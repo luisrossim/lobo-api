@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { InventoryService } from '@/services/inventory.service.js';;
-import { Utils } from '@/utils/utils.service.js';
+import { InventoryService } from '../services/inventory.service.js';;
+import { Utils } from '../utils/utils.service.js';
 
 
 export class InventoryController {

@@ -1,9 +1,9 @@
-import { User } from "@/models/user.js";
+import { User } from "../models/user.js";
 import { executeQuery } from "../config/database.js";
 import { AuthRequest, AuthResponse, RefreshAuthResponse } from "../models/auth.js";
 import { comparePassword } from "./security/bcrypt.service.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "./security/jwt.service.js";
-import { CustomError } from "@/exceptions/custom-error.js";
+import { CustomError } from "../exceptions/custom-error.js";
 
 
 export class AuthService {

@@ -1,7 +1,7 @@
-import { executeQuery, salvarContagemEmLote } from "@/config/database.js";
+import { executeQuery, salvarContagemEmLote } from "../config/database.js";
 import { InventoryContagem, InventoryHistory } from "../models/inventory.js";
 import { ItemService } from "./item.service.js";
-import { CustomError } from "@/exceptions/custom-error.js";
+import { CustomError } from "../exceptions/custom-error.js";
 import { format } from "date-fns/format";
 
 
@@ -30,7 +30,7 @@ export class InventoryService {
 			WHERE
 				CRIADO_EM >= CURRENT_DATE - 28
 			ORDER BY 
-				CRIADO_EM DESC, ID DESC
+				IH.ITEM_ID ASC
 		`
 
 		const historico = await executeQuery<InventoryHistory[]>(query);

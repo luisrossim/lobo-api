@@ -1,6 +1,6 @@
 import * as Firebird from 'node-firebird';
 import logger from './logger.js';
-import { InventoryContagem } from '@/models/inventory.js';
+import { InventoryContagem } from '../models/inventory.js';
 
 const { DB_HOST, DB_URL, DB_USER, DB_PASSWORD } = process.env;
 
