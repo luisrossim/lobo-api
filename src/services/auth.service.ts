@@ -1,6 +1,6 @@
 import { User } from "../models/user.js";
 import { executeQuery } from "../config/database.js";
-import { AuthRequest, AuthResponse, RefreshAuthResponse } from "../models/auth.js";
+import { AuthRequest, AuthResponse } from "../models/auth.js";
 import { comparePassword } from "./security/bcrypt.service.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "./security/jwt.service.js";
 import { CustomError } from "../exceptions/custom-error.js";
@@ -9,7 +9,11 @@ import { CustomError } from "../exceptions/custom-error.js";
 export class AuthService {
 
     async autenticar(credenciais: AuthRequest): Promise<AuthResponse> {
-        let query = `SELECT * FROM USUARIO_PWA WHERE login = ?`;
+        let query = `
+            SELECT ID, LOGIN_USUARIO, PASSWORD_USUARIO, FLAG_ATIVO
+            FROM USUARIOS_APP 
+            WHERE LOGIN_USUARIO = ?
+        `;
 
         const result = await executeQuery<User[]>(query, [credenciais.login]);
 
@@ -17,7 +21,7 @@ export class AuthService {
             throw new CustomError('Usuário não encontrado.');
         }
 
-        const passwordIsValid = await comparePassword(credenciais.password, result[0].password);
+        const passwordIsValid = await comparePassword(credenciais.password, result[0].PASSWORD_USUARIO);
 
         if(!passwordIsValid) {
             throw new CustomError('Credenciais incorretas.');
@@ -36,7 +40,7 @@ export class AuthService {
     }
 
 
-    async accessTokenRecover(refreshToken: string): Promise<RefreshAuthResponse> {
+    async accessTokenRecover(refreshToken: string): Promise<AuthResponse> {
         const decoded = verifyRefreshToken(refreshToken);
 
         if(!decoded){
@@ -45,7 +49,7 @@ export class AuthService {
 
         const newAccessToken = generateAccessToken(decoded.login)
         
-        const updatedAuthData: RefreshAuthResponse = {
+        const updatedAuthData: AuthResponse = {
             login: decoded.login,
             accessToken: newAccessToken,
             refreshToken: refreshToken

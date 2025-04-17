@@ -1,13 +1,9 @@
-import { Item } from "./item.js"
-
-export interface InventoryHistory {
-    id: number
-    item: Item
-    quantidade: number
-    criado_em: string
-}
-
-export interface InventoryContagem {
-    itemId: number
-    quantidade: number
+export interface ContagemEstoque {
+    ID: number,
+    COD_PRO: number,
+    QUANTIDADE: number,
+    DATA_CONTAGEM: string,
+    NOME_PRO: string,
+    ESTOQUE_MINIMO_PRO: number,
+    UNIDADE_MEDIDA: string
 }

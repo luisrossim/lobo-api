@@ -1,70 +1,52 @@
 import { executeQuery, salvarContagemEmLote } from "../config/database.js";
-import { InventoryContagem, InventoryHistory } from "../models/inventory.js";
-import { ItemService } from "./item.service.js";
+import { ContagemEstoque } from "../models/inventory.js";
 import { CustomError } from "../exceptions/custom-error.js";
 import { format } from "date-fns/format";
+import { ContagemItem } from "../models/schemas/contagem.schema.js";
 
 
 export class InventoryService {
-	private itemService: ItemService;
 
-	constructor(){
-		this.itemService = new ItemService();
-	}
+	constructor(){}
 
  
-	async findAll(): Promise<InventoryHistory[]> {
+	async findAll(): Promise<ContagemEstoque[]> {
 		const query = `
 			SELECT 
-				IH.ID, 
-				I.ID AS ITEM_ID, 
-				I.DESCRICAO, 
-				I.ESTOQUE_MINIMO, 
-				I.UN_MEDIDA, 
-				IH.QUANTIDADE, 
-				IH.CRIADO_EM 
+				ICE.ID, 
+				ICE.DATA_CONTAGEM, 
+				ICE.QUANTIDADE,
+				P.COD_PRO,
+				P.NOME_PRO,
+				P.ESTOQUE_MINIMO_PRO,
+				UNM.DESCRICAO AS UNIDADE_MEDIDA
 			FROM 
-				INVENTARIO_HISTORICO IH
-			JOIN ITEM I
-				ON IH.ITEM_ID = I.ID
+				INDUSTRIA_CONTAGEM_ESTOQUE ICE
+			JOIN 
+				PRODUTO P ON (ICE.CODIGO_PRODUTO = P.COD_PRO)
+			JOIN
+				UNIDADE_MEDIDA UNM ON (UNM.CODIGO = P.CODIGO_UNIDADE_ENTRADA)
 			WHERE
-				CRIADO_EM >= CURRENT_DATE - 28
+				ICE.DATA_CONTAGEM >= CURRENT_DATE - 28
 			ORDER BY 
-				IH.ITEM_ID ASC
+				P.NOME_PRO ASC, ICE.DATA_CONTAGEM ASC
 		`
 
-		const historico = await executeQuery<InventoryHistory[]>(query);
+		const historico = await executeQuery<ContagemEstoque[]>(query);
 
 		if(!historico){
-			throw new CustomError('Erro ao buscar histórico do inventário.');
+			throw new CustomError('Erro ao buscar histórico de contagem do estoque.');
 		}
 
 		return historico;
 	}
 
 
-	async create(itemId: number, quantidade: number, criadoEm: Date): Promise<number> {
-		const query = `
-			INSERT INTO INVENTARIO_HISTORICO (ITEM_ID, QUANTIDADE, CRIADO_EM)
-			VALUES (?, ?, ?)
-			RETURNING ID
-		`
-		const itemIsValid = await this.itemService.findById(itemId);
-		const historicoId = await executeQuery<number>(query, [itemId, quantidade, criadoEm]);
-
-		if(!historicoId) {
-			throw new CustomError('Erro ao salvar histórico no inventário.');
-		}
-
-		return historicoId;
-	}
-
-
-	async createAll(contagem: InventoryContagem[]): Promise<void> {
+	async createAll(contagens: ContagemItem[]): Promise<void> {
 		const todayDate = new Date();
 		const todayString = format(todayDate, "yyyy-MM-dd");
 
-		return await salvarContagemEmLote(contagem, todayString);
+		return await salvarContagemEmLote(contagens, todayString);
 	}
 
 }

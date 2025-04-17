@@ -6,7 +6,16 @@ import { Item } from "../models/item.js";
 export class ItemService {
 
     async findById(id: number): Promise<Item> {
-        const query = `SELECT * FROM ITEM WHERE ID = ?`
+        const query = `
+            SELECT 
+                P.COD_PRO, P.NOME_PRO, P.ESTOQUE_MINIMO_PRO, UNM.DESCRICAO AS UNIDADE_MEDIDA
+            FROM 
+                PRODUTO P
+            JOIN
+                UNIDADE_MEDIDA UNM ON (UNM.CODIGO = P.CODIGO_UNIDADE_ENTRADA)
+            WHERE 
+                COD_PRO = ?
+        `
 
         const result = await executeQuery<Item[]>(query, [id]);
 
@@ -18,7 +27,18 @@ export class ItemService {
     }
 
     async findAll(): Promise<Item[]> {
-        const query = `SELECT * FROM ITEM WHERE FLAG_CONTROLE = 'S'`
+        const query = `
+            SELECT 
+                P.COD_PRO, P.NOME_PRO, P.ESTOQUE_MINIMO_PRO, UNM.DESCRICAO AS UNIDADE_MEDIDA
+            FROM 
+                PRODUTO P
+            JOIN
+                UNIDADE_MEDIDA UNM ON (UNM.CODIGO = P.CODIGO_UNIDADE_ENTRADA)
+            WHERE 
+                FLAG_CONTAGEM_ESTOQUE = 'S'
+            ORDER BY 
+                P.NOME_PRO
+        `
 
         const result = await executeQuery<Item[]>(query);
 

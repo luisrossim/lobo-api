@@ -1,7 +1,6 @@
 export interface Item {
-    id: number
-    descricao: string
-    estoque_minimo: number
-    un_medida: string
-    flag_controle: string
+    COD_PRO: number
+    NOME_PRO: string
+    ESTOQUE_MINIMO_PRO: number
+    UNIDADE_MEDIDA: string
 }

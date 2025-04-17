@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { InventoryService } from '../services/inventory.service.js';;
-import { Utils } from '../utils/utils.service.js';
+import { ContagemEstoque } from '../models/inventory.js';
+import { ContagemItem } from '../models/schemas/contagem.schema.js';
 
 
 export class InventoryController {
@@ -13,33 +14,20 @@ export class InventoryController {
 
 
   async findAll(req: Request, res: Response): Promise<Response> {
-    const inventoryHistory = await this.inventoryService.findAll();
+    const contagens: ContagemEstoque[] = await this.inventoryService.findAll();
 
-    if(inventoryHistory.length === 0){
+    if(contagens.length === 0){
       return res.status(204).send();
     }
 
-    return res.status(200).json(inventoryHistory);
-  }
-
-
-  async create(req: Request, res: Response): Promise<Response> {
-    const { itemId, quantidade, criadoEm } = req.body;
-
-    const itemIdNumber = Utils.parseParamToValidNumber(itemId);
-    const quantidadeNumber = Utils.parseParamToValidNumber(quantidade);
-    const criadoEmDate = Utils.parseStringToValidDate(criadoEm); 
-
-    const historicoId = await this.inventoryService.create(itemIdNumber, quantidadeNumber, criadoEmDate);
-    
-    return res.status(201).json(historicoId);
+    return res.status(200).json(contagens);
   }
 
 
   async createAll(req: Request, res: Response): Promise<Response> {
-    const contagem: { itemId: number, quantidade: number }[] = req.body;
+    const contagens: ContagemItem[] = req.body;
     
-    await this.inventoryService.createAll(contagem);
+    await this.inventoryService.createAll(contagens);
     
     return res.status(201).send();
   }

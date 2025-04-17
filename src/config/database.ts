@@ -1,6 +1,6 @@
 import * as Firebird from 'node-firebird';
 import logger from './logger.js';
-import { InventoryContagem } from '../models/inventory.js';
+import { ContagemItem } from '../models/schemas/contagem.schema.js';
 
 const { DB_HOST, DB_URL, DB_USER, DB_PASSWORD } = process.env;
 
@@ -61,7 +61,7 @@ export function queryAsync<T>(db: any, sql: string, params: any[]): Promise<T> {
 }
 
 
-export async function salvarContagemEmLote(contagens: InventoryContagem[], criadoEm: string) {
+export async function salvarContagemEmLote(contagens: ContagemItem[], criadoEm: string) {
   const db = await getConnection();
 
   return new Promise<void>((resolve, reject) => {
@@ -72,7 +72,7 @@ export async function salvarContagemEmLote(contagens: InventoryContagem[], criad
       }
 
       const sql = `
-        INSERT INTO INVENTARIO_HISTORICO (ITEM_ID, QUANTIDADE, CRIADO_EM)
+        INSERT INTO INDUSTRIA_CONTAGEM_ESTOQUE (CODIGO_PRODUTO, QUANTIDADE, DATA_CONTAGEM)
         VALUES (?, ?, ?)
       `;
 
