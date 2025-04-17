@@ -1,5 +1,6 @@
 import * as Firebird from 'node-firebird';
 import logger from './logger.js';
+import { ContagemItem } from '../models/schemas/contagem.schema.js';
 
 const { DB_HOST, DB_URL, DB_USER, DB_PASSWORD } = process.env;
 
@@ -29,18 +30,6 @@ export const getConnection = (): Promise<any> => {
   });
 };
 
-export function queryAsync<T>(db: any, sql: string, params: any[]): Promise<T> {
-  return new Promise((resolve, reject) => {
-    db.query(sql, params, (err: Error | null, result: T) => {
-      if (err) {
-        reject(err);
-
-      } else {
-        resolve(result);
-      }
-    });
-  });
-}
 
 export async function executeQuery<T>(sql: string, params: any[] = []): Promise<T> {
   let db: any;
@@ -55,4 +44,60 @@ export async function executeQuery<T>(sql: string, params: any[] = []): Promise<
   } finally {
     db?.detach();
   }
+}
+
+
+export function queryAsync<T>(db: any, sql: string, params: any[]): Promise<T> {
+  return new Promise((resolve, reject) => {
+    db.query(sql, params, (err: Error | null, result: T) => {
+      if (err) {
+        reject(err);
+
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
+
+export async function salvarContagemEmLote(contagens: ContagemItem[], criadoEm: string) {
+  const db = await getConnection();
+
+  return new Promise<void>((resolve, reject) => {
+    db.transaction(Firebird.ISOLATION_READ_COMMITTED, async (err: any, transaction: any) => {
+      if (err) {
+        db.detach();
+        return reject(err);
+      }
+
+      const sql = `
+        INSERT INTO INDUSTRIA_CONTAGEM_ESTOQUE (CODIGO_PRODUTO, QUANTIDADE, DATA_CONTAGEM)
+        VALUES (?, ?, ?)
+      `;
+
+      try {
+        for (const item of contagens) {
+          const params = [item.itemId, item.quantidade, criadoEm];
+          await new Promise<void>((res, rej) => {
+            transaction.query(sql, params, (err: any) => {
+              if (err) return rej(err);
+              res();
+            });
+          });
+        }
+
+        transaction.commit((err: any) => {
+          db.detach();
+          if (err) return reject(err);
+          resolve();
+        });
+      } catch (error) {
+        transaction.rollback(() => {
+          db.detach();
+          reject(error);
+        });
+      }
+    });
+  });
 }

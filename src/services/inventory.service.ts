@@ -1,36 +1,52 @@
-import { executeQuery } from "@/config/database.js";
-import { InventoryHistory } from "../models/inventory.js";
-import { inventoryHistoryMock } from "@/tests/mock/inventory.mock.js"
-import { ItemService } from "./item.service.js";
-import { CustomError } from "@/exceptions/custom-error.js";
+import { executeQuery, salvarContagemEmLote } from "../config/database.js";
+import { ContagemEstoque } from "../models/inventory.js";
+import { CustomError } from "../exceptions/custom-error.js";
+import { format } from "date-fns/format";
+import { ContagemItem } from "../models/schemas/contagem.schema.js";
 
 
 export class InventoryService {
-	private itemService: ItemService;
 
-	constructor(){
-		this.itemService = new ItemService();
-	}
+	constructor(){}
 
-	async findAll(): Promise<InventoryHistory[]> {
-		const mock = inventoryHistoryMock;
-		return mock;
-	}
-
-	async create(itemId: number, quantidade: number, criadoEm: Date): Promise<number> {
+ 
+	async findAll(): Promise<ContagemEstoque[]> {
 		const query = `
-			INSERT INTO INVENTARIO_HISTORICO (ITEM_ID, QUANTIDADE, CRIADO_EM)
-			VALUES (?, ?, ?)
-			RETURNING ID
+			SELECT 
+				ICE.ID, 
+				ICE.DATA_CONTAGEM, 
+				ICE.QUANTIDADE,
+				P.COD_PRO,
+				P.NOME_PRO,
+				P.ESTOQUE_MINIMO_PRO,
+				UNM.DESCRICAO AS UNIDADE_MEDIDA
+			FROM 
+				INDUSTRIA_CONTAGEM_ESTOQUE ICE
+			JOIN 
+				PRODUTO P ON (ICE.CODIGO_PRODUTO = P.COD_PRO)
+			JOIN
+				UNIDADE_MEDIDA UNM ON (UNM.CODIGO = P.CODIGO_UNIDADE_ENTRADA)
+			WHERE
+				ICE.DATA_CONTAGEM >= CURRENT_DATE - 28
+			ORDER BY 
+				P.NOME_PRO ASC, ICE.DATA_CONTAGEM ASC
 		`
-		const itemIsValid = await this.itemService.findById(itemId);
-		const historicoId = await executeQuery<number>(query, [itemId, quantidade, criadoEm]);
 
-		if(!historicoId) {
-			throw new CustomError('Erro ao salvar histórico no inventário.');
+		const historico = await executeQuery<ContagemEstoque[]>(query);
+
+		if(!historico){
+			throw new CustomError('Erro ao buscar histórico de contagem do estoque.');
 		}
 
-		return historicoId;
+		return historico;
+	}
+
+
+	async createAll(contagens: ContagemItem[]): Promise<void> {
+		const todayDate = new Date();
+		const todayString = format(todayDate, "yyyy-MM-dd");
+
+		return await salvarContagemEmLote(contagens, todayString);
 	}
 
 }

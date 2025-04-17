@@ -1,7 +1,6 @@
 export interface User {
-    id: number
-    nome: string
-    login: string
-    password: string
-    criadoEm: string
+    ID: number
+    LOGIN_USUARIO: string 
+    PASSWORD_USUARIO: string 
+    FLAG_ATIVO: string
 }
