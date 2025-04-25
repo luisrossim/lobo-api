@@ -3,7 +3,8 @@ import { executeQuery } from "../config/database.js";
 import { AuthRequest, AuthResponse } from "../models/auth.js";
 import { comparePassword } from "./security/bcrypt.service.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "./security/jwt.service.js";
-import { CustomError } from "../exceptions/custom-error.js";
+import { NotFoundException } from "../exceptions/not-found.js";
+import { InvalidArgumentsException } from "../exceptions/invalid-arguments.js";
 
 
 export class AuthService {
@@ -18,13 +19,13 @@ export class AuthService {
         const result = await executeQuery<User[]>(query, [credenciais.login]);
 
         if(!result || result.length === 0) {
-            throw new CustomError('Usuário não encontrado.');
+            throw new NotFoundException('Usuário não encontrado.');
         }
 
         const passwordIsValid = await comparePassword(credenciais.password, result[0].PASSWORD_USUARIO);
 
         if(!passwordIsValid) {
-            throw new CustomError('Credenciais incorretas.');
+            throw new InvalidArgumentsException('Credenciais incorretas.');
         }
 
         const accessToken = generateAccessToken(credenciais.login);
@@ -44,7 +45,7 @@ export class AuthService {
         const decoded = verifyRefreshToken(refreshToken);
 
         if(!decoded){
-            throw new CustomError('Refresh token inválido.')
+            throw new InvalidArgumentsException('Refresh token inválido.')
         }
 
         const newAccessToken = generateAccessToken(decoded.login)

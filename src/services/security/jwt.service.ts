@@ -5,7 +5,7 @@ const aSecretKey: string = process.env.JWTSECRET || "dAKT&AiK@TPmQD&f@uKM!FTcG";
 const rSecretKey: string = process.env.REFRESHJWTSECRET || "OSJudA%SimFs*LARasAl!ULNw";
 
 export function generateAccessToken(login: string): string {
-  const expiresIn = getNext4AMTimestamp() - getUnixTime(new Date());
+  const expiresIn = getTimeUntilNext4AM();
   return jwt.sign({ login }, aSecretKey, { expiresIn });
 }
 
@@ -30,7 +30,7 @@ export function verifyRefreshToken(token: string): JwtPayload  | null {
   }
 }
 
-function getNext4AMTimestamp(): number {
+function getTimeUntilNext4AM(): number {
   const now = new Date();
   
   let next4AM = set(now, { hours: 4, minutes: 0, seconds: 0, milliseconds: 0 });
@@ -39,5 +39,5 @@ function getNext4AMTimestamp(): number {
     next4AM = addDays(next4AM, 1);
   }
 
-  return getUnixTime(next4AM);
+  return getUnixTime(next4AM) - getUnixTime(now);
 }
